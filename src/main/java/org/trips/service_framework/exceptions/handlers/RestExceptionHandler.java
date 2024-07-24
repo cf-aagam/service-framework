@@ -32,10 +32,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<Object> handleException(Exception ex) {
         log.error("RestExceptionHandler: {}: ", ex.getClass().getSimpleName(), ex);
-        String errMsg = String.format("RestExceptionHandler: %s: %s", ex.getClass().getSimpleName(), ex.getMessage());
         StatusResponse status = StatusResponse.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .statusMessage(errMsg)
+                .statusMessage(ex.getMessage())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
@@ -53,7 +52,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         StatusResponse status = StatusResponse.builder()
                 .statusCode(HttpStatus.NO_CONTENT.value())
-                .statusMessage(bodyOfResponse)
+                .statusMessage(ex.getMessage())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
@@ -67,11 +66,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {ServiceException.class})
     protected ResponseEntity<Object> handleServiceException(ServiceException ex, WebRequest request) {
         log.error("ServiceException: ", ex);
-        String bodyOfResponse = String.format("ServiceException: %s", ex.toString());
 
         StatusResponse status = StatusResponse.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .statusMessage(bodyOfResponse)
+                .statusMessage(ex.getMessage())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
@@ -92,11 +90,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        String bodyOfResponse = String.format("MethodArgumentNotValidException: %s", errors);
-
         StatusResponse statusResponse = StatusResponse.builder()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-                .statusMessage(bodyOfResponse)
+                .statusMessage(errors.toString())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
@@ -124,11 +120,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String bodyOfResponse = "HttpRequestMethodNotSupportedException: " + ex.toString();
-
         StatusResponse statusResponse = StatusResponse.builder()
                 .statusCode(HttpStatus.METHOD_NOT_ALLOWED.value())
-                .statusMessage(bodyOfResponse)
+                .statusMessage(ex.getMessage())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
@@ -141,11 +135,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String bodyOfResponse = "MissingPathVariableException: " + ex.toString();
-
         StatusResponse statusResponse = StatusResponse.builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .statusMessage(bodyOfResponse)
+                .statusMessage(ex.getMessage())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
@@ -158,11 +150,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String bodyOfResponse = "NoHandlerFoundException: " + ex.toString();
-
         StatusResponse statusResponse = StatusResponse.builder()
                 .statusCode(HttpStatus.NOT_FOUND.value())
-                .statusMessage(bodyOfResponse)
+                .statusMessage(ex.getMessage())
                 .statusType(StatusResponse.Type.ERROR)
                 .build();
 
