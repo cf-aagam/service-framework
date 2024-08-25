@@ -16,7 +16,7 @@ ext {
 }
 
 group "com.github.ironman19933"
-version "3.2.2"
+version "3.3.0-rc6"
 
 sourceCompatibility = '11'
 
@@ -48,6 +48,10 @@ dependencies {
     api 'net.sf.ehcache:ehcache:2.10.9.2'
     api 'com.vladmihalcea:hibernate-types-52:2.21.1'
     api 'org.flywaydb:flyway-core:9.16.0'
+    api 'com.squareup:javapoet:1.13.0'
+    api 'com.google.auto.service:auto-service:1.1.1'
+    api 'org.javers:javers-spring-boot-starter-sql:6.6.5'
+    api 'com.google.code.gson:gson:2.9.0'
 
     annotationProcessor(
             platform("org.springframework.boot:spring-boot-dependencies:2.7.1"),
@@ -55,7 +59,8 @@ dependencies {
             "javax.annotation:javax.annotation-api",
             "com.querydsl:querydsl-apt:5.0.0:jpa",
             "org.projectlombok:lombok:1.18.26",
-            "org.mapstruct:mapstruct-processor:1.5.3.Final"
+            "org.mapstruct:mapstruct-processor:1.5.3.Final",
+            "com.google.auto.service:auto-service:1.1.1"
     )
 }
 
