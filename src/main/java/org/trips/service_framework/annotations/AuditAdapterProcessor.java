@@ -12,8 +12,10 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author anomitra on 26/08/24
@@ -79,13 +81,17 @@ public class AuditAdapterProcessor extends AbstractProcessor {
                     .addMethod(getValueTypes)
                     .build();
 
+            String destination = getAuditClassPath(packageName);
+
             // Write the generated class to a file
-            try(Writer sourceFileWriter = processingEnv.getFiler().createSourceFile(packageName + ".audit.adapters." + adapterClassName).openWriter()) {
-                String destination = packageName + ".audit.adapters";
-                log.info("Destination: {}", destination);
+            try(Writer sourceFileWriter = processingEnv
+                    .getFiler()
+                    .createSourceFile(String.format("%s.%s", destination, adapterClassName))
+                    .openWriter()
+            ) {
+                log.debug("Destination: {}", destination);
                 JavaFile javaFile = JavaFile.builder(destination, adapterClass)
                         .build();
-                log.info("{}.audit.adapters.{}   {}", packageName, adapterClassName, ":: Adapter Class Name");
                 javaFile.writeTo(sourceFileWriter);
             } catch (Exception e) {
                 log.error("writing error {}", e.getMessage());
@@ -93,5 +99,15 @@ public class AuditAdapterProcessor extends AbstractProcessor {
             }
         }
         return true;
+    }
+
+    private String getAuditClassPath(String packageName) {
+        String AUDIT_PACKAGE = ".audit.adapters";
+        String[] parts = packageName.split("\\.");
+        String basePackageName = Arrays.stream(parts)
+                .limit(3)
+                .collect(Collectors.joining("."));
+        return basePackageName + AUDIT_PACKAGE;
+
     }
 }

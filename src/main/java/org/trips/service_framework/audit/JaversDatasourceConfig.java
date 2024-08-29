@@ -6,10 +6,8 @@ package org.trips.service_framework.audit;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.javers.repository.sql.ConnectionProvider;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,25 +15,17 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class JaversDatasourceConfig {
 
-    @Bean
-    @Primary
-    @ConfigurationProperties("spring.datasource")
-    public DataSourceProperties dataSourceProperties() {
-        return new DataSourceProperties();
-    }
+    @Value("${javers.datasource.url}")
+    private String url;
 
-    @Bean
-    @Primary
-    @ConfigurationProperties("spring.datasource.configuration")
-    public HikariDataSource dataSource(DataSourceProperties dataSourceProperties) {
-        return dataSourceProperties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
-    }
+    @Value("${javers.datasource.username}")
+    private String username;
 
-    @Bean("javersDataSourceProperties")
-    @ConfigurationProperties("javers.datasource")
-    public DataSourceProperties javersDataSourceProperties() {
-        return new DataSourceProperties();
-    }
+    @Value("${javers.datasource.password}")
+    private String password;
+
+    @Value("${javers.datasource.driver-class-name}")
+    private String driverClassName;
 
     @Value("${javers.datasource.hikari.minimum-idle}")
     private String minIdleConns;
@@ -45,8 +35,13 @@ public class JaversDatasourceConfig {
 
     @Bean(name = "JpaHibernateConnectionProvider")
     @Primary
-    public ConnectionProvider jpaConnectionProvider(@Qualifier("javersDataSourceProperties") DataSourceProperties javersDataSourceProperties) {
-        HikariDataSource dataSource = javersDataSourceProperties.initializeDataSourceBuilder()
+    public ConnectionProvider jpaConnectionProvider() {
+        DataSourceProperties dataSourceProperties = new DataSourceProperties();
+        dataSourceProperties.setUrl(url);
+        dataSourceProperties.setUsername(username);
+        dataSourceProperties.setPassword(password);
+        dataSourceProperties.setDriverClassName(driverClassName);
+        HikariDataSource dataSource = dataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
         dataSource.setMaximumPoolSize(Integer.parseInt(maxPoolSize));
