@@ -31,7 +31,7 @@ public class AuditAdapterProcessor extends AbstractProcessor {
             String className = element.getSimpleName().toString();
             String packageName = elementUtils.getPackageOf(element).getQualifiedName().toString();
             String adapterClassName = className + "Adapter";
-            TypeName objectMapperType = ClassName.get("com.fasterxml.jackson.databind", "ObjectMapper", "objectMapper");
+            TypeName objectMapperType = ClassName.get("com.fasterxml.jackson.databind", "ObjectMapper");
 
             // Defining classnames to use in code generation
             ClassName sourceClass = ClassName.get(packageName, className);
@@ -60,10 +60,10 @@ public class AuditAdapterProcessor extends AbstractProcessor {
                     .returns(sourceClass)
                     .addParameter(jsonElementClass, "json")
                     .addParameter(jsonDeserializationContextClass, "jsonDeserializationContext")
+                    .beginControlFlow("try")
                     .addStatement("$T jsonNode = objectMapper.readTree(json.toString())", jsonNodeClass)
                     .addStatement("return objectMapper.treeToValue(jsonNode, $T.class)", sourceClass)
-                    .addException(jsonProcessingExceptionClass)
-                    .beginControlFlow("catch ($T e)", jsonProcessingExceptionClass)
+                    .nextControlFlow("catch ($T e)", jsonProcessingExceptionClass)
                     .addStatement("throw new $T(\"Failed to deserialize JSON to POJO\", e)", runtimeExceptionClass)
                     .endControlFlow()
                     .build();
