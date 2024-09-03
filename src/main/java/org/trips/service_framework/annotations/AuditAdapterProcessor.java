@@ -31,40 +31,59 @@ public class AuditAdapterProcessor extends AbstractProcessor {
             String className = element.getSimpleName().toString();
             String packageName = elementUtils.getPackageOf(element).getQualifiedName().toString();
             String adapterClassName = className + "Adapter";
+            TypeName objectMapperType = ClassName.get("com.fasterxml.jackson.databind", "ObjectMapper", "objectMapper");
 
-            FieldSpec gsonField = FieldSpec.builder(ClassName.get("com.google.gson", "Gson"), "gson")
+            // Defining classnames to use in code generation
+            ClassName sourceClass = ClassName.get(packageName, className);
+            ClassName jsonElementClass = ClassName.get("com.google.gson", "JsonElement");
+            ClassName jsonDeserializationContextClass = ClassName.get("com.google.gson", "JsonDeserializationContext");
+            ClassName jsonSerializationContextClass = ClassName.get("com.google.gson", "JsonSerializationContext");
+            ClassName jsonNodeClass = ClassName.get("com.fasterxml.jackson.databind", "JsonNode");
+            ClassName jsonProcessingExceptionClass = ClassName.get("com.fasterxml.jackson.core", "JsonProcessingException");
+            ClassName jsonParserClass = ClassName.get("com.google.gson", "JsonParser");
+            ClassName runtimeExceptionClass = ClassName.get("java.lang", "RuntimeException");
+
+            FieldSpec gsonField = FieldSpec.builder(objectMapperType, "objectMapper")
                     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                     .build();
 
             MethodSpec constructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
-                    .addStatement("this.$N = new $T()", "gson", ClassName.get("com.google.gson", "Gson"))
+                    .addParameter(objectMapperType, "objectMapper")
+                    .addStatement("this.objectMapper = objectMapper")
                     .build();
 
-            // Generate methods
+            // Generate fromJson method
             MethodSpec fromJson = MethodSpec.methodBuilder("fromJson")
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(ClassName.get(packageName, className))
-                    .addParameter(ClassName.get("com.google.gson", "JsonElement"), "json")
-                    .addParameter(ClassName.get("com.google.gson", "JsonDeserializationContext"), "jsonDeserializationContext")
-                    .addStatement("return gson.fromJson(json, $T.class)", ClassName.get(packageName, className))
+                    .returns(sourceClass)
+                    .addParameter(jsonElementClass, "json")
+                    .addParameter(jsonDeserializationContextClass, "jsonDeserializationContext")
+                    .addStatement("$T jsonNode = objectMapper.readTree(json.toString())", jsonNodeClass)
+                    .addStatement("return objectMapper.treeToValue(jsonNode, $T.class)", sourceClass)
+                    .addException(jsonProcessingExceptionClass)
+                    .beginControlFlow("catch ($T e)", jsonProcessingExceptionClass)
+                    .addStatement("throw new $T(\"Failed to deserialize JSON to POJO\", e)", runtimeExceptionClass)
+                    .endControlFlow()
                     .build();
 
+            // Generate toJson method
             MethodSpec toJson = MethodSpec.methodBuilder("toJson")
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(ClassName.get("com.google.gson", "JsonElement"))
-                    .addParameter(ClassName.get(packageName, className), "sourceValue")
-                    .addParameter(ClassName.get("com.google.gson", "JsonSerializationContext"), "jsonSerializationContext")
-                    .addStatement("return gson.toJsonTree(sourceValue, $T.class)", ClassName.get(packageName, className))
+                    .returns(jsonElementClass)
+                    .addParameter(sourceClass, "sourceValue")
+                    .addParameter(jsonSerializationContextClass, "jsonSerializationContext")
+                    .addStatement("$T jsonNode = objectMapper.valueToTree(sourceValue)", jsonNodeClass)
+                    .addStatement("return $T.parseString(jsonNode.toString())", jsonParserClass)
                     .build();
 
             MethodSpec getValueTypes = MethodSpec.methodBuilder("getValueTypes")
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(ParameterizedTypeName.get(ClassName.get(List.class), ClassName.get(Class.class)))
-                    .addStatement("return List.of($T.class)", ClassName.get(packageName, className))
+                    .addStatement("return List.of($T.class)", sourceClass)
                     .build();
 
             // Generate class
@@ -73,7 +92,7 @@ public class AuditAdapterProcessor extends AbstractProcessor {
                     .addField(gsonField)
                     .addSuperinterface(ParameterizedTypeName.get(
                             ClassName.get("org.javers.core.json", "JsonTypeAdapter"),
-                            ClassName.get(packageName, className)))
+                            sourceClass))
                     .addAnnotation(ClassName.get("org.springframework.stereotype", "Component"))
                     .addMethod(constructor)
                     .addMethod(fromJson)
