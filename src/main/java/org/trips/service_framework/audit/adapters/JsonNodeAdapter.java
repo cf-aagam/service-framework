@@ -18,27 +18,27 @@ import java.util.List;
  */
 
 @Component
-public class JSONObjectAdapter implements JsonTypeAdapter<JSONObject> {
+public class JsonNodeAdapter implements JsonTypeAdapter<JsonNode> {
 
     private final ObjectMapper objectMapper;
 
-    public JSONObjectAdapter(ObjectMapper objectMapper) {
+    public JsonNodeAdapter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public JSONObject fromJson(JsonElement json,
+    public JsonNode fromJson(JsonElement json,
                              JsonDeserializationContext jsonDeserializationContext) {
         try {
             JsonNode jsonNode = objectMapper.readTree(json.toString());
-            return objectMapper.treeToValue(jsonNode, JSONObject.class);
+            return objectMapper.treeToValue(jsonNode, JsonNode.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to deserialize JSON to POJO", e);
         }
     }
 
     @Override
-    public JsonElement toJson(JSONObject sourceValue,
+    public JsonElement toJson(JsonNode sourceValue,
                               JsonSerializationContext jsonSerializationContext) {
         JsonNode jsonNode = objectMapper.valueToTree(sourceValue);
         return JsonParser.parseString(jsonNode.toString());
