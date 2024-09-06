@@ -9,7 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import org.javers.core.json.JsonTypeAdapter;
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -48,6 +47,6 @@ public class JsonNodeAdapter implements JsonTypeAdapter<ObjectNode> {
 
     @Override
     public List<Class> getValueTypes() {
-        return List.of(ObjectNode.class);
+        return List.of(JsonNode.class, ObjectNode.class);
     }
 }
