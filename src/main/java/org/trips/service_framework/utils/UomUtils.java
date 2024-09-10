@@ -30,7 +30,7 @@ public class UomUtils {
         if (outputUom.equals(inputUom)) {
             return quantity;
         }
-        if (outputUom.equals(UnitOfMeasurement.KG)) {
+        if (outputUom.equals(UnitOfMeasurement.kg)) {
             return convertLbsToKg(quantity);
         }
 
