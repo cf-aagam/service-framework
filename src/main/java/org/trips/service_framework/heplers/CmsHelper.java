@@ -11,6 +11,24 @@ import java.util.*;
 @Service
 public class CmsHelper {
 
+    public SkuAttributes getAttributesFromMap(Map<String, String> attributeMap) {
+        return SkuAttributes.builder()
+                .species(attributeMap.get("species"))
+                .productType(attributeMap.get("product_type"))
+                .spec(attributeMap.get("spec"))
+                .catchType(attributeMap.get("catch_type"))
+                .freezingMethod(attributeMap.get("freezing_method"))
+                .packing(attributeMap.get("packing"))
+                .glazingPercentage(attributeMap.get("glazing_percentage"))
+                .unitWeight(attributeMap.get("unit_weight"))
+                .quantityPerUnit(attributeMap.get("quantity_per_unit"))
+                .unitPerCarton(attributeMap.get("unit_per_carton"))
+                .treatment(attributeMap.get("treatment"))
+                .grade(attributeMap.get("grade"))
+                .quality(attributeMap.get("quality"))
+                .build();
+    }
+
     public Map<String, Object> createRequestMap(String name, String value, String operator, boolean isAttribute) {
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("name", name);

@@ -1,9 +1,11 @@
 package org.trips.service_framework.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -36,19 +38,28 @@ public class CmsSkuResponse {
 
     @Data
     public static class Sku {
-        public List<SkuAttribute> attributes;
         public String id;
         public String name;
         public String code;
 
+        @JsonProperty("productType")
+        public ProductType productType;
+
+        @JsonProperty("isActive")
+        public boolean isActive;
+
         public Optional<String> getShelfLife() {
-            for (SkuAttribute skuAttribute : this.attributes) {
-                if (skuAttribute.getAttribute().getName().equals("shelf_life")) {
-                    return Optional.ofNullable(skuAttribute.getValue());
+            if (Objects.nonNull(this.attributes)) {
+                for (SkuAttribute skuAttribute : this.attributes) {
+                    if (skuAttribute.getAttribute().getName().equals("shelf_life")) {
+                        return Optional.ofNullable(skuAttribute.getValue());
+                    }
                 }
             }
 
             return Optional.empty();
         }
+
+        public List<SkuAttribute> attributes;
     }
 }

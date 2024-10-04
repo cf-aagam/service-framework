@@ -30,12 +30,10 @@ import java.util.stream.Collectors;
 @Component
 public class CmsService {
 
-    @Value("${cms.base-url}")
-    private String cmsUrl;
-
     @Value("${cms.namespace-id}")
     private String cmsNamespaceId;
 
+    private final String cmsUrl;
     private final CmsHelper cmsHelper;
     private final GraphQLUtils gqlUtils;
     private final ObjectMapper objectMapper;
@@ -43,6 +41,7 @@ public class CmsService {
     private final SnsEventPublisher snsEventPublisher;
 
     public CmsService(
+            @Value("${cms.base-url}") String cmsUrl,
             GraphQLUtils gqlUtils,
             ObjectMapper objectMapper,
             CmsHelper cmsHelper,
@@ -61,6 +60,7 @@ public class CmsService {
                 .baseUrl(cmsUrl)
                 .build();
 
+        this.cmsUrl = cmsUrl;
         this.gqlUtils = gqlUtils;
         this.cmsHelper = cmsHelper;
         this.objectMapper = objectMapper;

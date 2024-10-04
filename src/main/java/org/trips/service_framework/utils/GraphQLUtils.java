@@ -5,11 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphQLUtils {
 
-    private final String queryFolderPath;
-
-    public GraphQLUtils(String queryFolderPath) {
-        this.queryFolderPath = queryFolderPath;
-    }
+    private final String queryFolderPath = "queries";
 
     public String getQueryFilePath(String filename) {
         return String.join("/", queryFolderPath, filename);
