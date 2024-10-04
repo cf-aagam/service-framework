@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SKUAttributes {
+public class SkuAttributes {
     private String spec;
     private String species;
     private String productType;

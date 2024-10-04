@@ -1,0 +1,12 @@
+query SearchSkuByCode($searchQuery: SearchQuery!) {
+    searchSkus(searchQuery: $searchQuery) {
+        attributes {
+            ... on AttributeWithScalarValue {
+                value
+                attribute {
+                    name
+                }
+            }
+        }
+    }
+}

@@ -53,6 +53,9 @@ dependencies {
     api 'com.google.auto.service:auto-service:1.1.1'
     api 'org.javers:javers-spring-boot-starter-sql:6.6.5'
     api 'com.google.code.gson:gson:2.9.0'
+    api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
+    api 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    api 'com.graphql-java-kickstart:graphql-webclient-spring-boot-starter:1.0.0'
 
     annotationProcessor(
             platform("org.springframework.boot:spring-boot-dependencies:2.7.1"),
