@@ -41,6 +41,7 @@ public class CmsSkuResponse {
         public String id;
         public String name;
         public String code;
+        public List<SkuAttribute> attributes;
 
         @JsonProperty("productType")
         public ProductType productType;
@@ -49,17 +50,11 @@ public class CmsSkuResponse {
         public boolean isActive;
 
         public Optional<String> getShelfLife() {
-            if (Objects.nonNull(this.attributes)) {
-                for (SkuAttribute skuAttribute : this.attributes) {
-                    if (skuAttribute.getAttribute().getName().equals("shelf_life")) {
-                        return Optional.ofNullable(skuAttribute.getValue());
-                    }
-                }
-            }
-
-            return Optional.empty();
+            return Optional.ofNullable(this.attributes).stream()
+                    .flatMap(List::stream)
+                    .filter(skuAttribute -> skuAttribute.getAttribute().getName().equals("shelf_life"))
+                    .map(SkuAttribute::getValue)
+                    .findFirst();
         }
-
-        public List<SkuAttribute> attributes;
     }
 }

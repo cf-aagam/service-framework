@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.trips.service_framework.constants.CmsConstants;
 import org.trips.service_framework.dtos.CmsSkuResponse;
 import org.trips.service_framework.dtos.CmsSkuResponse.Sku;
 import org.trips.service_framework.dtos.SkuAttributes;
@@ -107,7 +108,6 @@ public class CmsService {
         }
 
         if (response.getData().getSearchSkus().size() > 1) {
-            log.error("Multiple SKU found as per filters - populating the first one as default!");
             throw new CmsException(String.format("Multiple SKU found for the provided sku code: %s", code));
         }
 
@@ -151,7 +151,7 @@ public class CmsService {
 
         Map<String, Object> skuData = new HashMap<>();
         skuData.put("attributes", skuCreationAttributes);
-        skuData.put("productType", "FAAS");
+        skuData.put("productType", CmsConstants.PRODUCT_TYPE);
         skuData.put("name", cmsHelper.constructSkuName(skuCreationAttributes));
 
         Map<String, Object> requestData = new HashMap<>();

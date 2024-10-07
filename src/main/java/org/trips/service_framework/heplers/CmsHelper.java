@@ -1,7 +1,7 @@
 package org.trips.service_framework.heplers;
 
 import org.springframework.stereotype.Service;
-import org.trips.service_framework.constants.CMSConstants;
+import org.trips.service_framework.constants.CmsConstants;
 import org.trips.service_framework.dtos.SkuAttributes;
 import org.apache.commons.text.StringSubstitutor;
 import org.trips.service_framework.utils.CmsUtils;
@@ -68,7 +68,7 @@ public class CmsHelper {
         attributes.forEach(x -> {
             String name = x.get("name");
             String value = x.get("value");
-            attributeMap.put(name, Objects.equals(value, CMSConstants.NOT_APPLICABLE) ? "" : value.trim());
+            attributeMap.put(name, Objects.equals(value, CmsConstants.NOT_APPLICABLE) ? "" : value.trim());
         });
 
         String quantityPerUnit = attributeMap.getOrDefault("quantity_per_unit", "");

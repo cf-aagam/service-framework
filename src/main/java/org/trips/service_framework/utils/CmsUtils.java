@@ -1,15 +1,20 @@
 package org.trips.service_framework.utils;
 
-import org.trips.service_framework.constants.CMSConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
+import org.trips.service_framework.constants.CmsConstants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
 public class CmsUtils {
 
     public static String sanitizeInput(String attribute, String value) {
-        if (Objects.isNull(value) || value.isEmpty() || value.equals(CMSConstants.NOT_APPLICABLE)) {
-            return CMSConstants.NOT_APPLICABLE;
+        if (Objects.isNull(value) || value.isEmpty() || value.equals(CmsConstants.NOT_APPLICABLE)) {
+            return CmsConstants.NOT_APPLICABLE;
         }
 
         if (attribute.equals("treatment")) {
@@ -20,25 +25,21 @@ public class CmsUtils {
     }
 
     private static String sanitizeTreatment(String treatment) {
-        String[] treatments = treatment.split(",");
-        StringBuilder sanitizedTreatment = new StringBuilder();
+        List<String> treatmentArray = new ArrayList<>();
+        Arrays.stream(treatment.split(","))
+                .map(CmsUtils::reformatTreatmentString)
+                .filter(trt -> StringUtils.isNotEmpty(trt))
+                .forEach(trt -> treatmentArray.add(String.format("\"%s\"", trt)));
 
-        for (String t : treatments) {
-            String parsedTreatment = parseTreatmentString(t);
-            if (!parsedTreatment.isEmpty()) {
-                sanitizedTreatment.append("\"").append(parsedTreatment).append("\",");
-            }
+        if (CollectionUtils.isEmpty(treatmentArray)) {
+            return "NOT_APPLICABLE";
         }
 
-        if (sanitizedTreatment.length() == 0) {
-            return CMSConstants.NOT_APPLICABLE;
-        }
-
-        sanitizedTreatment.setLength(sanitizedTreatment.length() - 1);
-        return String.format("[%s]", sanitizedTreatment.toString());
+        String result = StringUtils.join(treatmentArray, ",");
+        return String.format("[%s]", result);
     }
 
-    private static String parseTreatmentString(String treatment) {
+    private static String reformatTreatmentString(String treatment) {
         treatment = treatment.replace("[", "").replace("]", "");
         treatment = treatment.replaceAll("\"", "");
         return treatment.trim();
