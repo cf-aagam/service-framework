@@ -26,9 +26,6 @@ public class CmsHelper {
                 .treatment(attributeMap.get("treatment"))
                 .grade(attributeMap.get("grade"))
                 .quality(attributeMap.get("quality"))
-                .heavyMetalTest(attributeMap.get("heavy_metal_test"))
-                .shelfLife(attributeMap.get("shelf_life"))
-                .version(attributeMap.get("version"))
                 .build();
     }
 

@@ -21,14 +21,11 @@ public class SkuAttributes {
     private String packing;
     private String glazingPercentage;
     private String unitWeight;
-    private String shelfLife;
     private String quality;
-    private String heavyMetalTest;
     private String treatment;
     private String quantityPerUnit;
     private String unitPerCarton;
     private String catchType;
-    private String version;
     private String grade;
 
     public static Map<String, Function<SkuAttributes, Object>> attributeGetters() {
@@ -46,9 +43,6 @@ public class SkuAttributes {
             put("treatment", SkuAttributes::getTreatment);
             put("grade", SkuAttributes::getGrade);
             put("quality", SkuAttributes::getQuality);
-            put("shelf_life", SkuAttributes::getShelfLife);
-            put("heavy_metal_test", SkuAttributes::getHeavyMetalTest);
-            put("version", SkuAttributes::getVersion);
         }};
 
         return attributeGetters;
