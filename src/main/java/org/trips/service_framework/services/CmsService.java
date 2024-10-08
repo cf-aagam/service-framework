@@ -139,7 +139,8 @@ public class CmsService {
         return response;
     }
 
-    private Sku createSku(Map<String, Object> requestParams) {
+    public Sku createSku(SkuAttributes skuAttributes) {
+        Map<String, Object> requestParams = cmsHelper.getSearchQueryFromAttributes(skuAttributes);
         List<Map<String, String>> attributes = (List) ((Map) requestParams.get("searchQuery")).get("filters");
         Map<String, String> skuAttributesMap = attributes.stream()
                 .collect(Collectors.toMap(attribute -> attribute.get("name"), attribute -> attribute.get("value")));
@@ -187,14 +188,13 @@ public class CmsService {
             return response.getData().getSearchSkus().get(0);
         } catch (CmsException cmsException) {
             log.info("SKU not found. Creating new SKU for attributes {}", attributes);
-            Map<String, Object> requestParams = cmsHelper.getSearchQueryFromAttributes(attributes);
-            return createSku(requestParams);
+            return createSku(attributes);
         }
     }
 
     public Date fetchSkuExpiryDate(String skuCode, DateTime createdAt) {
         log.info("CMS: fetching expiry date for skuCode: {}, createdAt: {}", skuCode, createdAt);
-        DateTime referenceTime = createdAt != null ? createdAt : DateTime.now();
+        DateTime referenceTime = Objects.nonNull(createdAt) ? createdAt : DateTime.now();
         Date defaultShelfLife = referenceTime.plusYears(2).toDate();
 
         CmsSkuResponse response = getSkuByCode(skuCode);

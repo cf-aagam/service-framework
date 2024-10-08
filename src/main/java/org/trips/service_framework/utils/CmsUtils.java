@@ -32,7 +32,7 @@ public class CmsUtils {
                 .forEach(trt -> treatmentArray.add(String.format("\"%s\"", trt)));
 
         if (CollectionUtils.isEmpty(treatmentArray)) {
-            return "NOT_APPLICABLE";
+            return CmsConstants.NOT_APPLICABLE;
         }
 
         String result = StringUtils.join(treatmentArray, ",");

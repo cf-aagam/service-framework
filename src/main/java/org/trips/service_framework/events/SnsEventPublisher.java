@@ -24,12 +24,11 @@ public class SnsEventPublisher {
 
     @SneakyThrows
     public String publishToSkuCreationTopic(SkuCreationTopicMessage message) {
-        log.info("message {}", message);
-        log.info("topic {}", skuCreationTopic);
+        log.info("Publishing SKU Creation Message: {} for topic: {}", message, skuCreationTopic);
 
         String serialisedMessage = objectMapper.writeValueAsString(message);
 
-        log.info("Serialised Message: {}", serialisedMessage);
+        log.info("SKU Creation Serialised Message: {}", serialisedMessage);
 
         PublishRequest request = new PublishRequest()
                 .withMessage(serialisedMessage)

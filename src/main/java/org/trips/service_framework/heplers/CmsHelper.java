@@ -26,17 +26,19 @@ public class CmsHelper {
                 .treatment(attributeMap.get("treatment"))
                 .grade(attributeMap.get("grade"))
                 .quality(attributeMap.get("quality"))
+                .heavyMetalTest(attributeMap.get("heavy_metal_test"))
+                .shelfLife(attributeMap.get("shelf_life"))
+                .version(attributeMap.get("version"))
                 .build();
     }
 
     public Map<String, Object> createRequestMap(String name, String value, String operator, boolean isAttribute) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("name", name);
-        requestMap.put("value", CmsUtils.sanitizeInput(name, value));
-        requestMap.put("operator", operator);
-        requestMap.put("isAttribute", isAttribute);
-
-        return requestMap;
+        return Map.of(
+                "name", name,
+                "value", CmsUtils.sanitizeInput(name, value),
+                "operator", operator,
+                "isAttribute", isAttribute
+        );
     }
 
     public Map<String, Object> getSearchQueryFromSkuCode(String code) {
@@ -44,21 +46,15 @@ public class CmsHelper {
         return Map.of("searchQuery", Map.of("filters", List.of(requestMap)));
     }
 
-    public Map<String, Object> getSearchQueryFromAttributes(SkuAttributes attributes) {
+    public Map<String, Object> getSearchQueryFromAttributes(SkuAttributes skuAttributes) {
+        List<String> attributeNames = List.of("species", "product_type", "spec", "catch_type", "freezing_method",
+                "packing", "glazing_percentage", "unit_weight", "quantity_per_unit", "unit_per_carton", "treatment", "grade", "quality");
+
         List<Map<String, Object>> attributeList = new ArrayList<>();
-        attributeList.add(createRequestMap("species", attributes.getSpecies(), "EQ", true));
-        attributeList.add(createRequestMap("product_type", attributes.getProductType(), "EQ", true));
-        attributeList.add(createRequestMap("spec", attributes.getSpec(), "EQ", true));
-        attributeList.add(createRequestMap("catch_type", attributes.getCatchType(), "EQ", true));
-        attributeList.add(createRequestMap("freezing_method", attributes.getFreezingMethod(), "EQ", true));
-        attributeList.add(createRequestMap("packing", attributes.getPacking(), "EQ", true));
-        attributeList.add(createRequestMap("glazing_percentage", attributes.getGlazingPercentage(), "EQ", true));
-        attributeList.add(createRequestMap("unit_weight", attributes.getUnitWeight(), "EQ", true));
-        attributeList.add(createRequestMap("quantity_per_unit", attributes.getQuantityPerUnit(), "EQ", true));
-        attributeList.add(createRequestMap("unit_per_carton", attributes.getUnitPerCarton(), "EQ", true));
-        attributeList.add(createRequestMap("treatment", attributes.getTreatment(), "EQ", true));
-        attributeList.add(createRequestMap("grade", attributes.getGrade(), "EQ", true));
-        attributeList.add(createRequestMap("quality", attributes.getQuality(), "EQ", true));
+        attributeNames.forEach(attribute -> {
+            String value = (String) SkuAttributes.attributeGetters().get(attribute).apply(skuAttributes);
+            attributeList.add(createRequestMap(attribute, value, "EQ", true));
+        });
 
         return Map.of("searchQuery", Map.of("filters", attributeList));
     }
