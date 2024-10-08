@@ -56,6 +56,8 @@ dependencies {
     api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
     api 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     api 'com.graphql-java-kickstart:graphql-webclient-spring-boot-starter:1.0.0'
+    api 'javax.validation:validation-api:2.0.1.Final'
+    api 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
 
     annotationProcessor(
             platform("org.springframework.boot:spring-boot-dependencies:2.7.1"),
@@ -64,7 +66,8 @@ dependencies {
             "com.querydsl:querydsl-apt:5.0.0:jpa",
             "org.projectlombok:lombok:1.18.26",
             "org.mapstruct:mapstruct-processor:1.5.3.Final",
-            "com.google.auto.service:auto-service:1.1.1"
+            "com.google.auto.service:auto-service:1.1.1",
+            'org.springframework.boot:spring-boot-starter-validation'
     )
 }
 

@@ -20,6 +20,7 @@ import org.trips.service_framework.exceptions.CmsException;
 import org.trips.service_framework.exceptions.NotFoundException;
 import org.trips.service_framework.heplers.CmsHelper;
 import org.trips.service_framework.utils.GraphQLUtils;
+import org.trips.service_framework.utils.ValidationUtils;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
@@ -140,6 +141,7 @@ public class CmsService {
     }
 
     public Sku createSku(SkuAttributes skuAttributes) {
+        ValidationUtils.validate(skuAttributes);
         Map<String, Object> requestParams = cmsHelper.getSearchQueryFromAttributes(skuAttributes);
         List<Map<String, String>> attributes = (List) ((Map) requestParams.get("searchQuery")).get("filters");
         Map<String, String> skuAttributesMap = attributes.stream()

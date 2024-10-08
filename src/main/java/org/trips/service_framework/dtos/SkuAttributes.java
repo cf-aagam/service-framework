@@ -5,8 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotEmpty;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Data
@@ -14,19 +17,30 @@ import java.util.function.Function;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SkuAttributes {
+    @NotEmpty(message = "Spec is required")
     private String spec;
+    @NotEmpty(message = "Species is required")
     private String species;
+    @NotEmpty(message = "Product type is required")
     private String productType;
+    @NotEmpty(message = "Quality is required")
+    private String quality;
     private String freezingMethod;
     private String packing;
     private String glazingPercentage;
     private String unitWeight;
-    private String quality;
     private String treatment;
     private String quantityPerUnit;
     private String unitPerCarton;
     private String catchType;
     private String grade;
+
+    @AssertTrue(message = "Quantity information format is not correct")
+    public boolean isOk() {
+        return (Objects.nonNull(unitPerCarton) && Objects.nonNull(quantityPerUnit) && Objects.isNull(unitWeight)) ||
+                (Objects.isNull(unitPerCarton) && Objects.isNull(quantityPerUnit) && Objects.nonNull(unitWeight)) ||
+                (Objects.isNull(unitPerCarton) && Objects.isNull(quantityPerUnit) && Objects.isNull(unitWeight));
+    }
 
     public static Map<String, Function<SkuAttributes, Object>> attributeGetters() {
         Map<String, Function<SkuAttributes, Object>> attributeGetters = new HashMap<>() {{
