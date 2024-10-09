@@ -1,14 +1,13 @@
 package org.trips.service_framework.utils;
 
 import org.springframework.stereotype.Component;
+import org.trips.service_framework.constants.CmsConstants;
 
 @Component
 public class GraphQLUtils {
 
-    private final String queryFolderPath = "queries";
-
     public String getQueryFilePath(String filename) {
-        return String.join("/", queryFolderPath, filename);
+        return String.join("/", CmsConstants.QUERY_FOLDER_PATH, filename);
     }
 }
 

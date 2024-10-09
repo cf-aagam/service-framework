@@ -13,7 +13,7 @@ import java.util.Objects;
 public class CmsUtils {
 
     public static String sanitizeInput(String attribute, String value) {
-        if (Objects.isNull(value) || value.isEmpty() || value.equals(CmsConstants.NOT_APPLICABLE)) {
+        if (StringUtils.isEmpty(value) || CmsConstants.NOT_APPLICABLE.equals(value)) {
             return CmsConstants.NOT_APPLICABLE;
         }
 
