@@ -3,13 +3,13 @@ package org.trips.service_framework.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Data
-@Builder
+@SuperBuilder
 public class CmsSkuResponse {
     public ResponseBody data;
 
