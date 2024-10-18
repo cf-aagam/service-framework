@@ -103,7 +103,7 @@ public class CmsService {
 
         CmsSkuResponse response = skuSearchHelper(searchSkus);
 
-        if (response == null || response.getData() == null || response.getData().getSearchSkus().isEmpty()) {
+        if (Objects.isNull(response) || Objects.isNull(response.getData()) || response.getData().getSearchSkus().isEmpty()) {
             throw new CmsException(String.format("SKU search by codes returned null or empty response. Search codes: %s", codes));
         }
 
